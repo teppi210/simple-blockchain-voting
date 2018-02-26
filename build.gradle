@@ -1,0 +1,23 @@
+buildscript {
+    project.ext {
+        springBootPluginVersion = "1.5.10.RELEASE"
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:$project.springBootPluginVersion")
+    }
+
+    apply plugin: 'java'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    group = "com.chernikovmaksym"
+    version = 0.1
+}
