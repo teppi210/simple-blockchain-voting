@@ -1,0 +1,18 @@
+security.basic.enabled: false
+
+# Logging
+logging:
+  file: voting-app.log
+
+ethereum:
+  url: http://localhost:8545
+  sleepDuration: 1000
+  attempts: 10
+  admin:
+    filePath: /Users/maksym/geth/datadir/keystore/UTC--2018-02-22T09-50-36.583859395Z--e57f695e78ec5399e1c02e8cba2285072ff52d12
+    password: ""
+  wallets.filePath: /Users/maksym/geth/testwallets/
+
+voters: test,test,test1,test1,test2,test2
+
+
