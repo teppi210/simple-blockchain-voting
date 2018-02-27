@@ -4,6 +4,7 @@ import com.chernikovmaksym.voting.blockchain.VotingContract;
 import com.chernikovmaksym.voting.model.ContractStorage;
 import com.chernikovmaksym.voting.model.Voter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
@@ -11,10 +12,12 @@ import org.springframework.context.event.EventListener;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
-import org.web3j.tx.FastRawTransactionManager;
-import org.web3j.tx.response.PollingTransactionReceiptProcessor;
+import org.web3j.tx.TransactionManager;
+import org.web3j.tx.Transfer;
+import org.web3j.utils.Convert;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -29,12 +32,13 @@ public class ApplicationReadyConfig {
 
     private final ContractStorage contractStorage;
     private final Web3j web3j;
-    private final Credentials adminCredentials;
+    private final TransactionManager transactionManager;
 
-    public ApplicationReadyConfig(ContractStorage contractStorage, Web3j web3j, Credentials adminCredentials) {
+    @Autowired
+    public ApplicationReadyConfig(ContractStorage contractStorage, Web3j web3j, TransactionManager transactionManager) {
         this.contractStorage = contractStorage;
         this.web3j = web3j;
-        this.adminCredentials = adminCredentials;
+        this.transactionManager = transactionManager;
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -45,13 +49,7 @@ public class ApplicationReadyConfig {
         log.info("Deploying contract");
         String contractAddress = VotingContract.deploy(
                 web3j,
-                new FastRawTransactionManager(
-                        web3j,
-                        adminCredentials,
-                        new PollingTransactionReceiptProcessor(
-                                web3j,
-                                1000,
-                                10)),
+                transactionManager,
                 GeneralConfig.GAS_PRICE,
                 GeneralConfig.GAS_LIMIT,
                 contractStorage.getVoters()
@@ -59,8 +57,7 @@ public class ApplicationReadyConfig {
                         .map(voter -> voter.getCredentials().getAddress())
                         .collect(Collectors.toList()))
 
-                .sendAsync()
-                .get()
+                .send()
                 .getContractAddress();
         contractStorage.setContractAddress(contractAddress);
         log.info("Contract deployed. Contract address: " + contractAddress);
@@ -83,7 +80,9 @@ public class ApplicationReadyConfig {
             try {
                 String walletFileName = WalletUtils.generateFullNewWalletFile(voter.getPassword(), new File(ethereumWalletsFilePath));
                 voter.setFileName(walletFileName);
-                voter.setCredentials(WalletUtils.loadCredentials(voter.getPassword(), ethereumWalletsFilePath + walletFileName));
+                Credentials voterCredentials = WalletUtils.loadCredentials(voter.getPassword(), ethereumWalletsFilePath + walletFileName);
+                voter.setCredentials(voterCredentials);
+                new Transfer(web3j, transactionManager).sendFunds(voterCredentials.getAddress(), BigDecimal.ONE, Convert.Unit.ETHER).send();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
