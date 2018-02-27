@@ -32,6 +32,7 @@ version = 0.1
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web:1.5.10.RELEASE")
+    compile("org.springframework.boot:spring-boot-starter-security:1.5.10.RELEASE")
     compile("org.projectlombok:lombok:1.16.20")
     compile("org.web3j:core:3.2.0")
 
