@@ -15,7 +15,7 @@ apply plugin: 'org.springframework.boot'
 
 jar {
     baseName = 'voting-app'
-    version =  '0.1'
+    version = '0.1'
 }
 
 repositories {
@@ -31,6 +31,8 @@ group = "com.chernikovmaksym.voting"
 version = 0.1
 
 dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web:1.5.10.RELEASE")
     compile("org.projectlombok:lombok:1.16.20")
-    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.web3j:core:3.2.0")
+
 }
