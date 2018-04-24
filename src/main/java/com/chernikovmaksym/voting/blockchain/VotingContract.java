@@ -3,6 +3,7 @@ package com.chernikovmaksym.voting.blockchain;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.DynamicArray;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.datatypes.generated.Uint256;
@@ -17,6 +18,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * <p>Auto generated code.
@@ -24,11 +26,26 @@ import java.util.List;
  * <p>Please use the <a href="https://docs.web3j.io/command_line.html">web3j command line tools</a>,
  * or the org.web3j.codegen.SolidityFunctionWrapperGenerator in the
  * <a href="https://github.com/web3j/web3j/tree/master/codegen">codegen module</a> to update.
- * <p>
- * <p>Generated with web3j version 3.2.0.
+ *
+ * <p>Generated with web3j version 3.4.0.
  */
 public class VotingContract extends Contract {
-    private static final String BINARY = "6060604052341561000f57600080fd5b6040516104dd3803806104dd83398101604052808051909101905060005b8151811015610096576000805460018101610048838261009d565b9160005260206000209001600084848151811061006157fe5b906020019060200201518254600160a060020a039182166101009390930a92830291909202199091161790555060010161002d565b50506100e7565b8154818355818115116100c1576000838152602090206100c19181019083016100c6565b505050565b6100e491905b808211156100e057600081556001016100cc565b5090565b90565b6103e7806100f66000396000f30060606040526004361061006c5763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416630121b93f81146100715780631af106791461008957806343e31c1a146100bb578063b780e507146100d1578063d375e15e14610137575b600080fd5b341561007c57600080fd5b610087600435610168565b005b341561009457600080fd5b61009f600435610276565b604051600160a060020a03909116815260200160405180910390f35b34156100c657600080fd5b61009f60043561029e565b34156100dc57600080fd5b6100e46102ac565b60405160208082528190810183818151815260200191508051906020019060200280838360005b8381101561012357808201518382015260200161010b565b505050509050019250505060405180910390f35b341561014257600080fd5b610156600160a060020a036004351661034d565b60405190815260200160405180910390f35b600080805b6000548210156101b557600080548390811061018557fe5b60009182526020909120015433600160a060020a03908116911614156101aa57600192505b60019091019061016d565b8215156101c157600080fd5b60015415610212575060005b6001548110156102125760018054829081106101e557fe5b60009182526020909120015433600160a060020a039081169116141561020a57600080fd5b6001016101cd565b600160a060020a03331660009081526002602052604090208490556001805480820161023e838261035f565b506000918252602090912001805473ffffffffffffffffffffffffffffffffffffffff191633600160a060020a031617905550505050565b600080548290811061028457fe5b600091825260209091200154600160a060020a0316905081565b600180548290811061028457fe5b6102b4610388565b6102bc610388565b6001546000906040518059106102cf5750595b90808252806020026020018201604052509150600090505b600154811015610347576002600060018381548110151561030457fe5b6000918252602080832090910154600160a060020a0316835282019290925260400190205482828151811061033557fe5b602090810290910101526001016102e7565b50919050565b60026020526000908152604090205481565b8154818355818115116103835760008381526020902061038391810190830161039a565b505050565b60206040519081016040526000815290565b6103b891905b808211156103b457600081556001016103a0565b5090565b905600a165627a7a7230582061a035b302b4cc28e352e0fe713272a8835fb4b9557ecdc37bc88aab3a4583140029";
+    private static final String BINARY = "608060405234801561001057600080fd5b5060405161052a38038061052a8339810160405280510160005b8151811015610088576000828281518110151561004357fe5b6020908102919091018101518254600180820185556000948552929093209092018054600160a060020a031916600160a060020a03909316929092179091550161002a565b5050610491806100996000396000f3006080604052600436106100825763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416630121b93f81146100875780631af10679146100a157806343e31c1a146100d5578063442b70f7146100ed578063b780e50714610152578063d375e15e14610167578063dadfd8561461019a575b600080fd5b34801561009357600080fd5b5061009f6004356101af565b005b3480156100ad57600080fd5b506100b96004356102b7565b60408051600160a060020a039092168252519081900360200190f35b3480156100e157600080fd5b506100b96004356102df565b3480156100f957600080fd5b506101026102ed565b60408051602080825283518183015283519192839290830191858101910280838360005b8381101561013e578181015183820152602001610126565b505050509050019250505060405180910390f35b34801561015e57600080fd5b5061010261034f565b34801561017357600080fd5b50610188600160a060020a03600435166103f3565b60408051918252519081900360200190f35b3480156101a657600080fd5b50610102610405565b600080805b6000548210156101f85760008054839081106101cc57fe5b600091825260209091200154600160a060020a03163314156101ed57600192505b6001909101906101b4565b82151561020457600080fd5b60015415610251575060005b60015481101561025157600180548290811061022857fe5b600091825260209091200154600160a060020a031633141561024957600080fd5b600101610210565b50503360008181526002602052604081209390935560018054808201825593527fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf6909201805473ffffffffffffffffffffffffffffffffffffffff191690921790915550565b60008054829081106102c557fe5b600091825260209091200154600160a060020a0316905081565b60018054829081106102c557fe5b6060600180548060200260200160405190810160405280929190818152602001828054801561034557602002820191906000526020600020905b8154600160a060020a03168152600190910190602001808311610327575b5050505050905090565b6060806000600180549050604051908082528060200260200182016040528015610383578160200160208202803883390190505b509150600090505b6001548110156103ed57600260006001838154811015156103a857fe5b6000918252602080832090910154600160a060020a0316835282019290925260400190205482518390839081106103db57fe5b6020908102909101015260010161038b565b50919050565b60026020526000908152604090205481565b6060600080548060200260200160405190810160405280929190818152602001828054801561034557602002820191906000526020600020908154600160a060020a031681526001909101906020018083116103275750505050509050905600a165627a7a72305820735745c50725f26203b7eb3d63df41b29f841cd7f895eb7584a5ffb5f3d563130029";
+    public static final String ABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"mark\",\"type\":\"uint256\"}],\"name\":\"vote\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"votersAddresses\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"votedAddresses\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getVotedAddresses\",\"outputs\":[{\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getMarks\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"}],\"name\":\"voterMarks\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getVotersAddresses\",\"outputs\":[{\"name\":\"\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_voters\",\"type\":\"address[]\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"}]";
+
+    public static final String FUNC_VOTE = "vote";
+
+    public static final String FUNC_VOTERSADDRESSES = "votersAddresses";
+
+    public static final String FUNC_VOTEDADDRESSES = "votedAddresses";
+
+    public static final String FUNC_GETVOTEDADDRESSES = "getVotedAddresses";
+
+    public static final String FUNC_GETMARKS = "getMarks";
+
+    public static final String FUNC_VOTERMARKS = "voterMarks";
+
+    public static final String FUNC_GETVOTERSADDRESSES = "getVotersAddresses";
 
     protected VotingContract(String contractAddress, Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit) {
         super(BINARY, contractAddress, web3j, credentials, gasPrice, gasLimit);
@@ -39,15 +56,15 @@ public class VotingContract extends Contract {
     }
 
     public RemoteCall<TransactionReceipt> vote(BigInteger mark) {
-        Function function = new Function(
-                "vote",
+        final Function function = new Function(
+                FUNC_VOTE,
                 Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(mark)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
     public RemoteCall<String> votersAddresses(BigInteger param0) {
-        Function function = new Function("votersAddresses",
+        final Function function = new Function(FUNC_VOTERSADDRESSES,
                 Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(param0)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {
                 }));
@@ -55,19 +72,67 @@ public class VotingContract extends Contract {
     }
 
     public RemoteCall<String> votedAddresses(BigInteger param0) {
-        Function function = new Function("votedAddresses",
+        final Function function = new Function(FUNC_VOTEDADDRESSES,
                 Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(param0)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {
                 }));
         return executeRemoteCallSingleValueReturn(function, String.class);
     }
 
+    public RemoteCall<List> getVotedAddresses() {
+        final Function function = new Function(FUNC_GETVOTEDADDRESSES,
+                Arrays.<Type>asList(),
+                Arrays.<TypeReference<?>>asList(new TypeReference<DynamicArray<Address>>() {
+                }));
+        return new RemoteCall<List>(
+                new Callable<List>() {
+                    @Override
+                    @SuppressWarnings("unchecked")
+                    public List call() throws Exception {
+                        List<Type> result = (List<Type>) executeCallSingleValueReturn(function, List.class);
+                        return convertToNative(result);
+                    }
+                });
+    }
+
+    public RemoteCall<List> getMarks() {
+        final Function function = new Function(FUNC_GETMARKS,
+                Arrays.<Type>asList(),
+                Arrays.<TypeReference<?>>asList(new TypeReference<DynamicArray<Uint256>>() {
+                }));
+        return new RemoteCall<List>(
+                new Callable<List>() {
+                    @Override
+                    @SuppressWarnings("unchecked")
+                    public List call() throws Exception {
+                        List<Type> result = (List<Type>) executeCallSingleValueReturn(function, List.class);
+                        return convertToNative(result);
+                    }
+                });
+    }
+
     public RemoteCall<BigInteger> voterMarks(String param0) {
-        Function function = new Function("voterMarks",
+        final Function function = new Function(FUNC_VOTERMARKS,
                 Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(param0)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {
                 }));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
+    }
+
+    public RemoteCall<List> getVotersAddresses() {
+        final Function function = new Function(FUNC_GETVOTERSADDRESSES,
+                Arrays.<Type>asList(),
+                Arrays.<TypeReference<?>>asList(new TypeReference<DynamicArray<Address>>() {
+                }));
+        return new RemoteCall<List>(
+                new Callable<List>() {
+                    @Override
+                    @SuppressWarnings("unchecked")
+                    public List call() throws Exception {
+                        List<Type> result = (List<Type>) executeCallSingleValueReturn(function, List.class);
+                        return convertToNative(result);
+                    }
+                });
     }
 
     public static RemoteCall<VotingContract> deploy(Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit, List<String> _voters) {

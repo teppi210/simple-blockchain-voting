@@ -1,62 +1,70 @@
 package com.chernikovmaksym.voting.service;
 
 import com.chernikovmaksym.voting.blockchain.VotingContract;
-import com.chernikovmaksym.voting.config.GeneralConfig;
-import com.chernikovmaksym.voting.model.ContractStorage;
 import com.chernikovmaksym.voting.model.Voter;
 import com.chernikovmaksym.voting.model.dto.VoteRequest;
+import com.chernikovmaksym.voting.model.dto.VoteResponse;
+import com.chernikovmaksym.voting.repository.VoterRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.web3j.protocol.Web3j;
-import org.web3j.tx.FastRawTransactionManager;
-import org.web3j.tx.response.PollingTransactionReceiptProcessor;
 
 import java.math.BigInteger;
-import java.util.Optional;
+import java.util.List;
 
 @Service
 @Slf4j
 public class VotingService {
 
-    private final ContractStorage contractStorage;
-    private final Web3j web3j;
-    private final GeneralConfig generalConfig;
+    private final ContractProvider contractProvider;
+    private final VoterRepository voterRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public VotingService(ContractStorage contractStorage, Web3j web3j, GeneralConfig generalConfig) {
-        this.contractStorage = contractStorage;
-        this.web3j = web3j;
-        this.generalConfig = generalConfig;
+    public VotingService(ContractProvider contractProvider, VoterRepository voterRepository, PasswordEncoder passwordEncoder) {
+        this.contractProvider = contractProvider;
+        this.voterRepository = voterRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public void vote(VoteRequest voteRequest) throws Exception {
-        Optional<Voter> maybeExistingVoter = contractStorage.getVoters()
-                .parallelStream()
-                .filter(voter -> voter.getUsername().equals(voteRequest.getUsername()))
-                .filter(voter -> voter.getPassword().equals(voteRequest.getPassword()))
-                .findFirst();
+    public VoteResponse vote(VoteRequest voteRequest) throws Exception {
+        Voter voter = voterRepository.findByUsername(voteRequest.getUsername())
+                .orElseThrow(() -> new RuntimeException("Wrong username"));
 
-        if (!maybeExistingVoter.isPresent()) {
-            throw new RuntimeException("Wrong username or password");
+        if (!passwordEncoder.matches(voteRequest.getPassword(), voter.getPassword())) {
+            throw new RuntimeException("Wrong password");
         }
 
-        Voter voter = maybeExistingVoter.get();
-
-        log.info("Loading contract for voter: " + voter.getUsername() + " with address: " + voter.getCredentials().getAddress());
-        VotingContract votingContract = VotingContract.load(contractStorage.getContractAddress(), web3j,
-
-                new FastRawTransactionManager(
-                        web3j,
-                        voter.getCredentials(),
-                        new PollingTransactionReceiptProcessor(
-                                web3j,
-                                generalConfig.ethereumSleepDuration,
-                                generalConfig.ethereumAttempts)),
-                GeneralConfig.GAS_PRICE,
-                GeneralConfig.GAS_LIMIT);
+        log.info("Loading contract for voter: " + voter.getUsername() + " with address: " + voter.getWalletAddress());
+        VotingContract votingContract = contractProvider.loadContractFrom(voter.getPrivateKey());
 
         log.info("Sending vote");
         votingContract.vote(BigInteger.valueOf(voteRequest.getMark())).send();
+        log.info("Mark {} successfully submitted for address: {}", voteRequest.getMark(), voter.getWalletAddress());
+
+        return new VoteResponse(voter.getWalletAddress(), voter.getPrivateKey(), voteRequest.getMark());
+    }
+
+    public String getContractAddress() {
+        return contractProvider.getContractAddress();
+    }
+
+    @SuppressWarnings("unchecked") // Contract wrapper does not support lists properly
+    public List<BigInteger> getSubmittedMarks() throws Exception {
+        VotingContract contract = contractProvider.loadContractFromAdmin();
+        return contract.getMarks().send();
+    }
+
+    @SuppressWarnings("unchecked") // Contract wrapper does not support lists properly
+    public List<BigInteger> getVoterAddresses() throws Exception {
+        VotingContract contract = contractProvider.loadContractFromAdmin();
+        return contract.getVotersAddresses().send();
+    }
+
+    @SuppressWarnings("unchecked") // Contract wrapper does not support lists properly
+    public List<BigInteger> getVotedAddresses() throws Exception {
+        VotingContract contract = contractProvider.loadContractFromAdmin();
+        return contract.getVotedAddresses().send();
     }
 }

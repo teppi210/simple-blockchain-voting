@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+geth --datadir node1/ --syncmode 'full' --port 30311 --rpc --rpcaddr 'localhost' --rpcport 8501 --ipcpath "~/geth/geth.ipc" --rpcapi 'personal,db,eth,net,web3,txpool,miner' --bootnodes 'enode://9caef081b0793c3a299b6dea7cfa0b620254e5a9781039f3a9fed9e3d4e95556e07a273d6886424168a8fd42a43734001b9b7e55d20e19a05c1c88045cc33b58@127.0.0.1:30310' --networkid 1488 --gasprice '1' --unlock 'ca6fa8ee9c8a374eb41d3f3f1f49ad6167701756' --password node1/password.txt --targetgaslimit 100000000 --mine console

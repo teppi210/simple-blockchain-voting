@@ -3,15 +3,36 @@
 <head>
     <title>Vote</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"/>
+    <link href="style.css" rel="stylesheet"/>
 </head>
 <body>
-<h1 th:text="${contractAddress}"></h1>
+<div class="container">
 
-<form action="#" th:action="@{/vote}" th:object="${voteRequest}" method="post">
-    <p>Username: <input type="text" th:field="*{username}" /></p>
-    <p>Password: <input type="text" th:field="*{password}" /></p>
-    <p>Mark: <input type="text" th:field="*{mark}" /></p>
-    <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
-</form>
+    <center>
+        <h2 style="margin-top: 50px">Welcome to blockchain voting application!</h2>
+        <p><a href="/marks">Check marks</a></p>
+        <p><a href="/voterAddresses">Check voter addresses</a></p>
+        <p><a href="/votedAddresses">Check voted addresses</a></p>
+        <h3 style="margin-top: 50px">You can find contract address and ABI interface in the bottom of the page</h3>
+        <h3>Vote using the form below:</h3>
+
+        <div class="form-container">
+            <form style="margin: 100px" action="#" th:action="@{/vote}" th:object="${voteRequest}" method="post">
+                <p>Username: <input type="text" th:field="*{username}"/></p>
+                <p>Password: <input type="text" th:field="*{password}"/></p>
+                <p>Mark: <input type="text" th:field="*{mark}"/></p>
+                <p><input type="submit" value="Submit"/> <input type="reset" value="Reset"/></p>
+            </form>
+        </div>
+
+        <h3>Contract information: </h3>
+        <h4>Contract address:</h4>
+        <p th:text="${contractAddress}"></p>
+        <h4>ABI interface:</h4>
+        <p th:text="${abi}"></p>
+    </center>
+</div>
 </body>
 </html>

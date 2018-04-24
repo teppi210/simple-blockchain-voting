@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Vote result</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"/>
+    <link href="style.css" rel="stylesheet"/>
+</head>
+<body>
+
+<div class="container">
+    <center>
+        <h2 style="margin: 50px">Oops :(</h2>
+        <h3>An error intercepted:</h3>
+        <b th:text="${exception}"></b>
+        <p><a href="/vote">Go to main page</a></p>
+    </center>
+</div>
+</body>
+</html>

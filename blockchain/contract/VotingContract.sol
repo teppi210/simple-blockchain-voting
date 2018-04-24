@@ -44,4 +44,12 @@ contract Voting {
         }
         return marks;
     }
+
+    function getVotersAddresses() public view returns (address[]) {
+        return votersAddresses;
+    }
+
+    function getVotedAddresses() public view returns (address[]) {
+        return votedAddresses;
+    }
 }
