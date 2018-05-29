@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Vote result</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"/>
+    <link href="style.css" rel="stylesheet"/>
+</head>
+<body>
+
+<div class="container">
+    <center>
+        <h2>Your mark is successfully submitted:</h2>
+        <h2 th:text="${voteResponse.getMark()}"></h2>
+        <p>
+        <h3>Your blockchain credentials:</h3>
+        <b>Wallet address:</b>
+        <b th:text="${voteResponse.getWalletAddress()}"></b>
+        <p>
+        <b>Private key:</b>
+        <b th:text="${voteResponse.getPrivateKey()}"></b>
+        <p><a href="/vote">Go to main page</a></p>
+    </center>
+</div>
+</body>
+</html>

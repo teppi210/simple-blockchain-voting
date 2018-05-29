@@ -1,18 +1,30 @@
 security.basic.enabled: false
 
-# Logging
 logging:
   file: voting-app.log
 
+spring.h2.console:
+  enabled: true
+  path: /h2
+
+spring.datasource:
+  url: "jdbc:h2:file:./votingdb"
+  username: votinguser
+  password: JDjnrMCr26GDwKEG
+  driver-class-name: org.h2.Driver
+
+spring.jpa.generate-ddl: true
+
 ethereum:
-  url: http://localhost:8545
-  sleepDuration: 1000
-  attempts: 10
+  url: http://localhost:8501
+  sleepDuration: 100
+  attempts: 100
+  gas-price: 20000000000
+  gas-limit: 10000000
+  user-ether-supply: 10
   admin:
-    filePath: /Users/maksym/geth/datadir/keystore/UTC--2018-02-22T09-50-36.583859395Z--e57f695e78ec5399e1c02e8cba2285072ff52d12
-    password: ""
-  wallets.filePath: /Users/maksym/geth/testwallets/
+    walletAddress: 0xca6fa8ee9c8a374eb41d3f3f1f49ad6167701756
+    privateKey: 17646106842132748178533805562811871044955692172000193893877865792463642600494
 
-voters: test,test,test1,test1,test2,test2
-
-
+voters:
+  fileName: voters.csv
